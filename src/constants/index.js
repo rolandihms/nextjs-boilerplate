@@ -1,0 +1,5 @@
+export const actionTypes = {
+  TOGGLE_LOADING: 'TOGGLE_LOADING',
+  GET_SETTINGS: 'GET_SETTINGS',
+  SET_SETTINGS: 'SET_SETTINGS',
+}

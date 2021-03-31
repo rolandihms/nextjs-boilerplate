@@ -1,65 +1,109 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import React from 'react';
+import dynamic from 'next/dynamic'
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+//Content-Methods / Functions
+import { apiRoute } from '../src/lib/content-methods-client';
+//Content-Methods / Functions
+import { getMenu, getPage, getContent, getSettings, getToken, getPosts } from '../src/lib/content-methods';
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+//import ProTip from '../src/ProTip';
+import Link from '../src/components/Link';
+//import SearchAppBar from '../src/components/SearchAppBar';
+const SearchAppBar = dynamic(() => import('../src/components/SearchAppBar'));
+//import MenuDrawer from '../src/components/MenuDrawer';
+const MenuDrawer = dynamic(() => import('../src/components/MenuDrawer'));
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+class Index extends React.Component {
+  async getInitialProps({ Component, router, ctx }) {
+    let pageProps = {};
+    console.log('In _APP getInitialProps +++++++++++++')
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+    }
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+    return { pageProps };
+  }
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+  async componentDidMount() {
+    console.log('Index Component Did Mount env')
+    console.log(this.props);
+    const { dispatch } = this.props;
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+  }
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+  render() {
+    const { classes } = this.props;
+    return (
+      <Container >
+        <SearchAppBar />
+        <MenuDrawer />
+        <Box my={4}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Next.js example
+              </Typography>
+          <Button variant="contained" color="primary" component={Link} naked href="/mui">
+            Go to the MUI
+              </Button>
+        
+        </Box>
+      </Container>
+    );
+  }
 }
+
+// Index.getInitialProps = async function (context) {
+//   const { req, query, res, asPath, pathname } = context;
+//   if (req) {
+//     let host = req.headers.host // will give you localhost:3000
+//     console.log('HAS HOST!!!!!!!!!!!!! '+host)
+//   }
+//   //Get Settings and Menu on Server
+//   console.log('getInitialProps Index Page');
+//   console.log('Index Component Did Mount env')
+//   //console.log(process.env);
+//   const { id } = context.query;
+//   const { env } = context.query;
+  
+//   //console.log(env)
+//   const data = await apiRoute({'route':'settings'});
+//   console.log(data);
+//   if (!data) {
+//     return {
+//       redirect: {
+//         destination: '/',
+//         permanent: false,
+//       },
+//     }
+//   }
+//   return { data, env }
+// }
+
+export async function getStaticProps (context) {
+
+  //Get Settings and Menu on Server
+  console.log('getStaticProps Index Page');
+  const data = await getSettings({});
+  console.log(data);
+  if (!data) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: { data: data }, // will be passed to the page component as props
+  }
+}
+
+export default compose(
+
+  connect(state => state),
+)(Index);
