@@ -7,6 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import { Provider } from 'react-redux';
 import withReduxStore from '../src/lib/with-redux-store';
+import { SnackbarProvider } from 'notistack';
 //import { useStore } from '../store'
 class MyApp extends App {
  
@@ -22,7 +23,9 @@ class MyApp extends App {
         <Provider store={reduxStore}> 
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Component {...pageProps} />
+            <SnackbarProvider maxSnack={3}>
+                  <Component pageContext={this.pageContext} {...pageProps} />
+              </SnackbarProvider>
           </ThemeProvider>
         </Provider>
       </React.Fragment>

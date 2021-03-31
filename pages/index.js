@@ -10,6 +10,11 @@ import Button from '@material-ui/core/Button';
 import { apiRoute } from '../src/lib/content-methods-client';
 //Content-Methods / Functions
 import { getMenu, getPage, getContent, getSettings, getToken, getPosts } from '../src/lib/content-methods';
+//Load Actions
+import {toggleLoading,setMenu, setPageContent,setSeoMeta,setContent,enqueueSnackbar} from '../src/actions/index';
+
+//Notifications
+import Notifier from '../src/components/Notifier';
 
 //import ProTip from '../src/ProTip';
 import Link from '../src/components/Link';
@@ -17,6 +22,10 @@ import Link from '../src/components/Link';
 const SearchAppBar = dynamic(() => import('../src/components/SearchAppBar'));
 //import MenuDrawer from '../src/components/MenuDrawer';
 const MenuDrawer = dynamic(() => import('../src/components/MenuDrawer'));
+
+//import HomePage from '../src/components/HomePage';
+const HomePage = dynamic(() => import('../src/components/HomePage'));
+
 
 class Index extends React.Component {
   async getInitialProps({ Component, router, ctx }) {
@@ -33,7 +42,16 @@ class Index extends React.Component {
     console.log('Index Component Did Mount env')
     console.log(this.props);
     const { dispatch } = this.props;
-
+    dispatch(
+        enqueueSnackbar(
+            {
+                message: 'No Menu Defined',
+                options: {
+                    variant: 'warning',
+                },
+            }
+        )
+    );
   }
 
   render() {
@@ -42,6 +60,7 @@ class Index extends React.Component {
       <Container >
         <SearchAppBar />
         <MenuDrawer />
+        <HomePage />
         <Box my={4}>
           <Typography variant="h4" component="h1" gutterBottom>
             Next.js example
@@ -51,6 +70,7 @@ class Index extends React.Component {
               </Button>
         
         </Box>
+        <Notifier />
       </Container>
     );
   }
